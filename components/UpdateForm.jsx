@@ -4,7 +4,7 @@ import { Button, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 
-const UpdateForm = ({ oldData }) => {
+const UpdateForm = ({ oldData, handleUpdateForm }) => {
   // user data
   const [userDetails, setUserDetails] = useState({
     name: oldData.name,
@@ -27,6 +27,7 @@ const UpdateForm = ({ oldData }) => {
         phoneNumber: userDetails.phoneNumber,
       }),
     });
+    handleUpdateForm(false);
   };
 
   //   handle onchange event of input

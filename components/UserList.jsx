@@ -52,6 +52,10 @@ const UserList = () => {
     });
   };
 
+  //callback updateForm
+  const handleUpdateForm = (prop) => {
+    setUpdateForm(prop);
+  };
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold py-3">User Lists:</h1>
@@ -94,7 +98,10 @@ const UserList = () => {
               }}
             />
             <ModalBody>
-              <UpdateForm oldData={oldData} updateForm={updateForm} />
+              <UpdateForm
+                oldData={oldData}
+                handleUpdateForm={handleUpdateForm}
+              />
             </ModalBody>
           </ModalContent>
         </Modal>
