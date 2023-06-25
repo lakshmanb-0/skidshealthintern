@@ -1,7 +1,7 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { db } from "@/firebase";
 import { arrayRemove, doc, getDoc, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
 import UpdateForm from "./UpdateForm";
 import {
   Card,
@@ -17,16 +17,18 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  useToast,
 } from "@chakra-ui/react";
-
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { add, reset } from "@/store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const UserList = () => {
   const [usersData, setUsersData] = useState([]);
-  const [oldData, setOldData] = useState({});
   const [updateForm, setUpdateForm] = useState(false);
-
-  const docRefresh = doc(db, "Data", "Users");
+  const userUpdated = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const toast = useToast();
 
   // get data at time
   useEffect(() => {
@@ -42,7 +44,7 @@ const UserList = () => {
       }
     };
     fetchData();
-  }, [docRefresh]);
+  }, [userUpdated]);
 
   // deleteUser
   const deleteUser = async (item) => {
@@ -50,12 +52,21 @@ const UserList = () => {
     await updateDoc(docRef, {
       UserDetails: arrayRemove(item),
     });
+    dispatch(add(item));
+    dispatch(reset());
+    toast({
+      title: "User Deleted",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
   };
 
-  //callback updateForm
+  //callback for close modal form or updateForm
   const handleUpdateForm = (prop) => {
     setUpdateForm(prop);
   };
+
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold py-3">User Lists:</h1>
@@ -72,7 +83,7 @@ const UserList = () => {
             <CardFooter className="flex gap-4">
               <IconButton
                 colorScheme="green"
-                onClick={() => (setUpdateForm(true), setOldData(item))}
+                onClick={() => (setUpdateForm(true), dispatch(add(item)))}
                 icon={<EditIcon />}
                 className="bg-green-600"
               ></IconButton>
@@ -98,10 +109,7 @@ const UserList = () => {
               }}
             />
             <ModalBody>
-              <UpdateForm
-                oldData={oldData}
-                handleUpdateForm={handleUpdateForm}
-              />
+              <UpdateForm handleUpdateForm={handleUpdateForm} />
             </ModalBody>
           </ModalContent>
         </Modal>

@@ -1,5 +1,7 @@
 "use client";
+import React from "react";
 import { db } from "@/firebase";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { AtSignIcon, EmailIcon, PhoneIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -8,35 +10,25 @@ import {
   InputLeftElement,
   useToast,
 } from "@chakra-ui/react";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import { reset, updateState } from "@/store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import validator from "validator";
 
 const UserForm = () => {
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-  });
+  const userDetails = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const toast = useToast();
 
   // handle onchange event of input value
   const handleChangeState = (e) => {
     const { name, value } = e.target;
-    setUserDetails((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    dispatch(updateState({ name, value }));
   };
 
   // add data to database
   const AddData = () => {
     updateDoc(doc(db, "Data", "Users"), {
-      UserDetails: arrayUnion({
-        name: userDetails.name,
-        email: userDetails.email,
-        phoneNumber: userDetails.phoneNumber,
-      }),
+      UserDetails: arrayUnion(userDetails),
     });
   };
 
@@ -46,11 +38,7 @@ const UserForm = () => {
     validator.isEmail(userDetails.email) && userDetails.name !== ""
       ? validator.isMobilePhone(userDetails.phoneNumber)
         ? (AddData(),
-          setUserDetails({
-            name: "",
-            email: "",
-            phoneNumber: "",
-          }),
+          dispatch(reset()),
           toast({
             title: "User Added",
             status: "success",
