@@ -71,31 +71,40 @@ const UserList = () => {
     <div className="p-4">
       <h1 className="text-3xl font-bold py-3">User Lists:</h1>
       <div className="flex gap-4 px-4 flex-wrap">
-        {usersData?.map((item, index) => (
-          <Card align="center" key={index} className="w-[300px]">
-            <CardHeader>
-              <Heading size="md"> {item.name}</Heading>
-            </CardHeader>
-            <CardBody className="text-center ">
-              <Text>{item.email}</Text>
-              <Text>{item.phoneNumber}</Text>
-            </CardBody>
-            <CardFooter className="flex gap-4">
-              <IconButton
-                colorScheme="green"
-                onClick={() => (setUpdateForm(true), dispatch(add(item)))}
-                icon={<EditIcon />}
-                className="bg-green-600"
-              ></IconButton>
-              <IconButton
-                colorScheme="red"
-                onClick={() => deleteUser(item)}
-                icon={<DeleteIcon />}
-                className="bg-red-600"
-              ></IconButton>
-            </CardFooter>
+        {usersData.length != 0 ? (
+          usersData?.map((item, index) => (
+            <Card align="center" key={index} className="w-[300px]">
+              <CardHeader>
+                <Heading size="md"> {item.name}</Heading>
+              </CardHeader>
+              <CardBody className="text-center ">
+                <Text>{item.email}</Text>
+                <Text>{item.phoneNumber}</Text>
+              </CardBody>
+              <CardFooter className="flex gap-4">
+                <IconButton
+                  colorScheme="green"
+                  onClick={() => (setUpdateForm(true), dispatch(add(item)))}
+                  icon={<EditIcon />}
+                  className="bg-green-600"
+                ></IconButton>
+                <IconButton
+                  colorScheme="red"
+                  onClick={() => deleteUser(item)}
+                  icon={<DeleteIcon />}
+                  className="bg-red-600"
+                ></IconButton>
+              </CardFooter>
+            </Card>
+          ))
+        ) : (
+          <Card
+            align="center"
+            className="w-[300px] h-[200px] grid justify-center items-center"
+          >
+            <Heading size="lg"> Add some Users</Heading>
           </Card>
-        ))}
+        )}
       </div>
 
       {updateForm && (
